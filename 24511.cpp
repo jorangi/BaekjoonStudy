@@ -1,4 +1,6 @@
 #include <iostream>
+#include <queue>
+#include <stack>
 using namespace std;
 
 int main()
@@ -20,7 +22,7 @@ int main()
     const int STACK = 1;
     const int NODE_LENGTH = 100000;
     bool arr_IsStack[NODE_LENGTH];
-    int queue_stack[NODE_LENGTH];
+    queue<int> queue_stack; //결국 큐스택은 스택인 경우 그냥 삽입안한 큐이다.
 
     //queuestack 길이
     int n;
@@ -39,28 +41,33 @@ int main()
     {
         int elementA;
         cin >> elementA;
-        queue_stack[i] = elementA;
+        if(arr_IsStack[i] == STACK) continue;
+        queue_stack.push(elementA);
+    }
+    //큐를 반전해야 하니 스택에 넣었다가 뺴기
+    stack<int> temp;
+    while(!queue_stack.empty())
+    {
+        temp.push(queue_stack.front());
+        queue_stack.pop();
+    }
+    while(!temp.empty())
+    {
+        queue_stack.push(temp.top());
+        temp.pop();
     }
 
     //삽입할 수열 길이
     int m;
     cin >> m;
 
-    //10만 사이즈를 2중 반복돌리는것은 무거움
+    //수열 B는 그냥 큐를 넣으면서 출력한다.
     for(int i = 0; i < m; i++)
     {
         int elementB;
         cin >> elementB;
-        for(int j = 0; j < n; j++)
-        {
-            //스택이면 그냥 넘김
-            if(arr_IsStack[j] == STACK) continue;
-
-            //큐면 입력값과 교환
-            int temp = elementB;
-            elementB = queue_stack[j];
-            queue_stack[j] = temp;
-        }
-        cout << elementB << ' ';
+        queue_stack.push(elementB);
+        cout << queue_stack.front() << ' ';
+        queue_stack.pop();
     }
 }
